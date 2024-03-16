@@ -594,6 +594,14 @@ tbody{
     text-align: center;
     max-width: 130px;
   }
+
+  .info--card p {
+    text-align: center;
+    font-size: 15px;
+    margin-top: 0;
+    color: #5b5b5b;
+  } 
+
   .side--bar img {
     margin-top: 10px;
     margin-left: 10px;
