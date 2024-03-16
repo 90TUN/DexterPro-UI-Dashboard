@@ -102,7 +102,7 @@ const UserGraphContainer = () => {
             tickSize: 10,
             tickPadding: 5,
             tickRotation: 0,
-            legend: "User",
+            legend: "Users",
             legendOffset: -50,
           }}
           enableGridX={false}
