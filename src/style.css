@@ -191,9 +191,15 @@ table {
 
 .table th,
 .table td {
-  padding: 8px;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #adc59e;
   white-space: nowrap; /* Prevent line breaks */
+}
+
+.table th{
+  border-bottom: 1px solid #3A5743;
+  margin-bottom: 10px;
 }
 
 .table tr {
