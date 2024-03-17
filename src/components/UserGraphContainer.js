@@ -73,7 +73,7 @@ const UserGraphContainer = () => {
       >
         Users on Dexter App
       </h1>
-      <div style={{ height: "400px", position: "relative", width: "auto" }}>
+      <div style={{ height: "400px", position: "relative", width: "100%" }}>
         <ResponsiveLine
           data={[{ id: "userCount", data: formatUserData(userData) }]} // Passing formatted data to ResponsiveLine
           margin={{ top: 50, right: 110, bottom: 50, left: 60 }}

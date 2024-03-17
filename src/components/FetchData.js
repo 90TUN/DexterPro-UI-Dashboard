@@ -145,9 +145,9 @@ function FetchData() {
                       width: "25px",
                       height: "27px",
                       borderRadius: "5px",
-                      backgroundColor: "#8D9091",
+                      backgroundColor: "white",
                       marginRight: "24px",
-                      border: "none",
+                      border: "2px solid #8D9091",
                       cursor: "pointer",
                     }}
                   >
@@ -180,8 +180,8 @@ function FetchData() {
                       width: "25px",
                       height: "27px",
                       borderRadius: "5px",
-                      backgroundColor: "#8D9091",
-                      border: "none",
+                      backgroundColor: "white",
+                      border: "2px solid #8D9091",
                       cursor: "pointer",
                     }}
                   >
