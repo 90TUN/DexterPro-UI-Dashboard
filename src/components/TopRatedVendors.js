@@ -79,8 +79,8 @@ function TopRatedVendors() {
                 className="vendor--line"
                 style={{
                   display: "inline-block",
-                  marginRight: "20px",
-                  marginLeft: "20px",
+                  marginRight: "16.5px",
+                  marginLeft: "16.5px",
                   color: "#808080",
                 }}
               >
