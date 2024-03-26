@@ -76,6 +76,7 @@ function FetchData() {
           }}
         >
           <button
+            className="user-toggle"
             onClick={handleFilterToggle}
             style={{
               borderRadius: "20px",
@@ -83,6 +84,7 @@ function FetchData() {
               backgroundColor: "#3A5743",
               color: "#CFCCD6",
               margin: "10px",
+              fontSize: "14px",
             }}
           >
             {showIncomplete ? "Show All Users" : "Show Incomplete Users"}
@@ -135,6 +137,7 @@ function FetchData() {
                   marginTop: "20px",
                   flexDirection: "row-reverse",
                   padding: "10px",
+                  color: "#8D9091",
                 }}
               >
                 <div>
@@ -149,6 +152,7 @@ function FetchData() {
                       marginRight: "24px",
                       border: "2px solid #8D9091",
                       cursor: "pointer",
+                      color: "#8D9091",
                     }}
                   >
                     &#8249;
@@ -183,12 +187,16 @@ function FetchData() {
                       backgroundColor: "white",
                       border: "2px solid #8D9091",
                       cursor: "pointer",
+                      color: "#8D9091",
                     }}
                   >
                     &#8250;
                   </button>
                 </div>
-                <div style={{ marginLeft: "10px" }}>
+                <div
+                  className="no-of-pages"
+                  style={{ marginLeft: "10px", color: "#8D9091" }}
+                >
                   {startIndex}-{endIndex} of {totalItems} items
                 </div>
               </div>

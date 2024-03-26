@@ -52,56 +52,61 @@ function TopRatedVendors() {
       {vendors.map((vendor) => (
         <div className="vendor-row" key={vendor.id}>
           <div className="vendor">
-            <div style={{ display: "inline-block" }}>
-              <img
-                className="vendor--line"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  marginRight: "16.5px",
-                  border: "3px solid #D9D9D9",
-                }}
-                src={vendor.image}
-                alt={vendor.fullName}
-              />
-              <div
-                className="vendor--line"
-                style={{
-                  display: "inline-block",
-                  marginRight: "16.5px",
-                  fontWeight: "bold",
-                }}
-              >
-                {vendor.fullName}
+            <div className="vendor--p1">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  className="vendor--line"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    marginRight: "16.5px",
+                    border: "3px solid #D9D9D9",
+                  }}
+                  src={vendor.image}
+                  alt={vendor.fullName}
+                />
+                <div
+                  className="vendor--line"
+                  style={{
+                    fontWeight: "bold",
+                    maxWidth: "100px", // Set maximum width for the container
+                    wordWrap: "break-word", // Allow text to break into multiple lines
+                    fontSize: "12px",
+                  }}
+                >
+                  {vendor.fullName}
+                </div>
               </div>
-              <div
-                className="vendor--line"
-                style={{
-                  display: "inline-block",
-                  marginRight: "16.5px",
-                  marginLeft: "16.5px",
-                  color: "#808080",
-                }}
-              >
-                {vendor.VendorName}
+              <div className="Vendor--p2">
+                <div
+                  className="vendor--line"
+                  style={{
+                    color: "#808080",
+                    marginLeft: "16.5px",
+                    marginRight: "1px",
+                    wordWrap: "normal",
+                  }}
+                >
+                  {vendor.VendorName}
+                </div>
               </div>
-              <img
-                className="vendor--line"
-                style={{ marginRight: "16.5px" }}
-                src="../images/Stars.png"
-                alt=""
-              />
-              <div
-                className="vendor--line"
-                style={{
-                  display: "inline-block",
-                  marginRight: "16.5px",
-                  color: "#3A5743",
-                  fontWeight: "700",
-                }}
-              >
-                4/5
+              <div className="vendor--p3">
+                <img
+                  className="vendor--line"
+                  style={{ marginRight: "4px" }}
+                  src="../images/Stars.png"
+                  alt=""
+                />
+                <div
+                  className="vendor--line"
+                  style={{
+                    color: "#3A5743",
+                    fontWeight: "700",
+                  }}
+                >
+                  4/5
+                </div>
               </div>
             </div>
           </div>

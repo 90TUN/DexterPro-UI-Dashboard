@@ -7,7 +7,7 @@ function Nav(props) {
       <div className="side--nav">
         <img id="notif" src="../images/notif--icon.png" alt="" />
         <img src="../images/profile.png" alt="" />
-        <h1>Admin</h1>
+        <h1 style={{ fontWeight: "lighter" }}>Admin</h1>
         <img src="../images/dropdown.png" alt="" />
       </div>
     </div>

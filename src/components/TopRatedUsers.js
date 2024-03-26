@@ -46,50 +46,52 @@ function TopRatedUsers() {
   }, []);
 
   return (
-    <div className="top-rated-vendors">
+    <div className="top-rated-vendors user-i">
       {dataLoaded && <h3>Top Rated Users</h3>} {/* Conditionally render h3 */}
       {users.map((user) => (
         <div className="vendor-row" key={user.id}>
           <div className="vendor">
-            <div style={{ display: "inline-block" }}>
-              <img
-                className="user--line"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  marginRight: "16.5px",
-                  border: "3px solid #D9D9D9",
-                }}
-                src={user.image}
-                alt={user.fullName}
-              />
-              <div
-                className="user--line"
-                style={{
-                  display: "inline-block",
-                  marginRight: "16.5px",
-                  fontWeight: "bold",
-                }}
-              >
-                {user.fullName}
+            <div className="user--p1">
+              <div style={{ display: "inline-block" }}>
+                <img
+                  className="user--line"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    border: "3px solid #D9D9D9",
+                    marginRight: "16.5px",
+                  }}
+                  src={user.image}
+                  alt={user.fullName}
+                />
+                <div
+                  className="user--line"
+                  style={{
+                    display: "inline-block",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {user.fullName}
+                </div>
               </div>
-              <img
-                className="user--line--star"
-                style={{ marginRight: "16.5px", marginLeft: "100px" }}
-                src="../images/Stars.png"
-                alt=""
-              />
-              <div
-                className="user--line"
-                style={{
-                  display: "inline-block",
-                  marginRight: "16.5px",
-                  color: "#3A5743",
-                  fontWeight: "700",
-                }}
-              >
-                4/5
+              <div className="user--p2">
+                <img
+                  className="user--line--star"
+                  src="../images/Stars.png"
+                  alt=""
+                />
+                <div
+                  className="user--line"
+                  style={{
+                    display: "inline-block",
+                    color: "#3A5743",
+                    fontWeight: "700",
+                    marginLeft: "4px",
+                  }}
+                >
+                  4/5
+                </div>
               </div>
             </div>
           </div>

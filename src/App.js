@@ -14,7 +14,7 @@ function App() {
       <div className="main">
         <SideBar />
         <div className="user--display">
-          <Nav title="Welcome Dexter Admin" />
+          <Nav title="Welcome Dexter Admin," />
 
           <DataInfo />
 
