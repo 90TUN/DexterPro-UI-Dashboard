@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-function TopRatedVendors() {
-  const [vendors, setVendors] = useState([]);
+function TopRatedShops() {
+  const [shops, setShops] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false); // State variable to track data loading
 
   useEffect(() => {
-    async function fetchVendors() {
+    async function fetchShops() {
       try {
         const token = sessionStorage.getItem('accessToken');
         if (!token) {
           throw new Error('No authentication token found');
         }
 
-        const response = await fetch("https://api.getdexterapp.com/api/backoffice/top-rated/businesses", {
+        const response = await fetch("https://api.getdexterapp.com/api/backoffice/top-rated/shops", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -24,13 +24,13 @@ function TopRatedVendors() {
         }
 
         // Sort vendors by average rating in descending order
-        const sortedVendors = responseData.data.sort((a, b) => b.average_rating - a.average_rating);
+        const sortedShops = responseData.data.sort((a, b) => b.average_rating - a.average_rating);
 
         // Take only the top 5 vendors
-        const topRatedVendors = sortedVendors.slice(0, 5);
+        const topRatedShops = sortedShops.slice(0, 5);
 
         // Extract relevant information and format the data
-        const formattedData = topRatedVendors.map((data) => ({
+        const formattedData = topRatedShops.map((data) => ({
           id: data.id,
           name: data.name,
           cover_image: data.cover_image,
@@ -38,21 +38,21 @@ function TopRatedVendors() {
         }));
 
         // Set the top 5 rated vendors to the state
-        setVendors(formattedData);
+        setShops(formattedData);
         setDataLoaded(true); // Set dataLoaded to true after data is fetched
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
 
-    fetchVendors();
+    fetchShops();
   }, []);
 
   return (
     <div className="top-rated-vendors">
-      {dataLoaded && <h3>Top Rated Vendors</h3>} {/* Conditionally render h3 */}
-      {vendors.map((vendor) => (
-        <div className="vendor-row" key={vendor.id}>
+      {dataLoaded && <h3>Top Rated Shops</h3>} {/* Conditionally render h3 */}
+      {shops.map((shop) => (
+        <div className="vendor-row" key={shop.id}>
           <div className="vendor">
             <div className="vendor--p1">
               <div style={{ display: "flex", alignItems: "center" }}>
@@ -65,8 +65,8 @@ function TopRatedVendors() {
                     marginRight: "16.5px",
                     border: "3px solid #D9D9D9",
                   }}
-                  src={vendor.cover_image}
-                  alt={vendor.name}
+                  src={shop.cover_image}
+                  alt={shop.name}
                 />
                 <div
                   className="vendor--line"
@@ -77,7 +77,7 @@ function TopRatedVendors() {
                     fontSize: "12px",
                   }}
                 >
-                  {vendor.name}
+                  {shop.name}
                 </div>
               </div>
               <div className="Vendor--p2">
@@ -116,4 +116,4 @@ function TopRatedVendors() {
   );
 }
 
-export default TopRatedVendors;
+export default TopRatedShops;

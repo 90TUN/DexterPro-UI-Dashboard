@@ -6,57 +6,40 @@ function DataInfo() {
   const [activeServicesCount, setActiveServicesCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [activeServiceRequestCount, setActiveServiceRequestCount] = useState(0);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let totalCount = 0;
-        let vendorTotalCount = 0;
-        let activeServicesTotalCount = 0;
-        let activeServiceRequestTotalCount = 0;
-
-        // Loop through each page
-        for (let i = 1; i <= 6; i++) {
-          const response = await axios.get(
-            `https://beta.getdexterapp.com/api/test?page=${i}`,
-          );
-          const data = response.data.data;
-
-          // Calculate vendor count for current page
-          const vendorCount = data.filter(
-            (item) => item.business?.vendor_id || item.shop?.vendor_id,
-          ).length;
-          vendorTotalCount += vendorCount;
-
-          // Calculate active services count for current page
-          const activeServicesCount = data.filter(
-            (item) =>
-              (item.shop && item.shop.service && item.shop.service.is_active) ||
-              (item.business &&
-                item.business.service &&
-                item.business.service.is_active),
-          ).length;
-          activeServicesTotalCount += activeServicesCount;
-
-          const activeServiceRequestCount = data.filter(
-            (item) =>
-              item.business &&
-              item.business.service &&
-              !item.business.service.is_bookable,
-          ).length;
-          activeServiceRequestTotalCount += activeServiceRequestCount;
-
-          // Calculate total user count
-          totalCount += data.length;
+        // Retrieve the token from sessionStorage (consistent with your other code)
+        const token = sessionStorage.getItem('accessToken');
+        console.log('Authorization Tokennnn:', token);
+        
+        // If there is no token, throw an error
+        if (!token) {
+          throw new Error('No authorization token found');
         }
 
-        // Update states
-        setVendorCount(vendorTotalCount);
-        setActiveServicesCount(activeServicesTotalCount);
-        setUserCount(totalCount);
-        setActiveServiceRequestCount(activeServiceRequestTotalCount);
+        const response = await axios.get(
+          "https://api.getdexterapp.com/api/backoffice/statistics",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = response.data;
+        console.log(data);
+          console.log(data.data.total_vendors)
+
+          setVendorCount(data.data.total_vendors);
+          setUserCount(data.data.total_users);
+          setActiveServiceRequestCount(data.data.total_completed_bookings + data.data.total_completed_orders);
+          setActiveServicesCount(data.data.total_completed_bookings + data.data.total_completed_orders);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError('Failed to fetch data');
       }
     };
 
@@ -65,6 +48,7 @@ function DataInfo() {
 
   return (
     <div className="info">
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div className="info--card vendor">
         <img src="../images/info--vendor.png" alt="" />
         <h1 style={{ color: "#1B264F" }}>{vendorCount}</h1>

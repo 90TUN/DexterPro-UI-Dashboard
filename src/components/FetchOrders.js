@@ -5,13 +5,13 @@ import Modal from "react-modal";
 // Setting the app element for accessibility
 Modal.setAppElement('#root');
 
-function FetchData() {
+function FetchOrders() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
@@ -22,29 +22,23 @@ function FetchData() {
           throw new Error('No authentication token found');
         }
 
-        const fetchData = async (page) => {
-          const url = `https://api.getdexterapp.com/api/backoffice/users?page=${page}`;
+        let allData = [];
+        let currentPage = 1;
+        let totalPages = 1;
+
+        while (currentPage <= totalPages) {
+          const url = `https://api.getdexterapp.com/api/backoffice/orders?page=${currentPage}`;
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
-          return response.data;
-        };
 
-        const fetchDataForAllPages = async () => {
-          let allData = [];
-          let page = 1;
-          let response = await fetchData(page);
-          while (response.data.length > 0) {
-            allData.push(response);
-            page++;
-            response = await fetchData(page);
-          }
-          return allData;
-        };
+          allData = [...allData, ...response.data.data];
+          totalPages = response.data.meta.last_page;
+          currentPage++;
+        }
 
-        const allData = await fetchDataForAllPages();
         setTableData(allData);
         setLoading(false);
       } catch (error) {
@@ -62,47 +56,53 @@ function FetchData() {
   };
 
   const goToPreviousPage = () => {
-    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : tableData.length - 1));
+    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : Math.ceil(filteredData.length / itemsPerPage) - 1));
   };
 
   const goToNextPage = () => {
-    setActiveTable((prev) => (prev + 1) % tableData.length);
+    setActiveTable((prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage));
   };
 
-  const handleRowClick = (user) => {
-    setSelectedUser(user);
+  const handleRowClick = (order) => {
+    setSelectedOrder(order);
   };
 
   const handleCloseModal = () => {
-    setSelectedUser(null);
+    setSelectedOrder(null);
   };
 
-  const handleSearch = (event) => {
+  const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+    setActiveTable(0); // Reset to the first page on search
   };
 
-  const filteredData = tableData
-    .flatMap((page) => page.data)
-    .filter((user) =>
-      user.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = tableData.filter((data) => {
+    const idString = String(data.id); // Convert data.id to a string
+    const referenceString = String(data.reference); // Convert data.reference to a string
+    return (
+      idString.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.payment_status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      referenceString.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  });
 
-  const startIndex = activeTable * itemsPerPage + 1;
-  const endIndex = Math.min(startIndex + itemsPerPage - 1, filteredData.length);
+  const startIndex = activeTable * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
   const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage); // Calculate total pages dynamically
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
     <div
       className="Container fetch"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
         <input
           type="text"
-          placeholder="Search by ID"
+          placeholder="Search by ID..."
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={handleSearchChange}
           style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', marginTop:"30px" }}
         />
       </div>
@@ -110,34 +110,35 @@ function FetchData() {
         <p>Loading...</p>
       ) : (
         <>
-          {tableData.length > 0 ? (
+          {filteredData.length > 0 ? (
             <>
               <div className="table-container">
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone number</th>
                       <th>ID</th>
-                      <th>Created At</th>
+                      <th>Reference</th>
+                      <th>Payment-Status</th>
+                      <th>Payment Method</th>
+                      <th>Subtotal Amount</th>
+                      <th>Total Amount</th>
+                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredData
-                      .slice(
-                        activeTable * itemsPerPage,
-                        (activeTable + 1) * itemsPerPage
-                      )
-                      .map((user, index) => (
-                        <tr key={index} onClick={() => handleRowClick(user)}>
+                      .slice(startIndex, endIndex)
+                      .map((data, index) => (
+                        <tr key={index} onClick={() => handleRowClick(data)}>
                           <td>
-                            {user.first_name} {user.last_name}
+                            {data.id} 
                           </td>
-                          <td>{user.email}</td>
-                          <td>{user.phone}</td>
-                          <td>{user.id}</td>
-                          <td>{user.created_at}</td>
+                          <td>{data.reference}</td>
+                          <td>{data.payment_status}</td>
+                          <td>{data.payment_method}</td>
+                          <td>{data.subtotal_amount}</td>
+                          <td>{data.total_amount}</td>
+                          <td>{data.status}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -212,7 +213,7 @@ function FetchData() {
                   className="no-of-pages"
                   style={{ marginLeft: "10px", color: "#8D9091" }}
                 >
-                  {startIndex}-{endIndex} of {totalItems} items
+                  {startIndex + 1}-{endIndex} of {totalItems} items
                 </div>
               </div>
             </>
@@ -221,12 +222,14 @@ function FetchData() {
           )}
         </>
       )}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {/* Modal for showing user details */}
+      {/* Modal for showing vendor details */}
       <Modal
-        isOpen={!!selectedUser}
+        isOpen={!!selectedOrder}
         onRequestClose={handleCloseModal}
-        contentLabel="User Details"
+        contentLabel="Vendor Details"
+       
         style={{
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)'
@@ -240,21 +243,42 @@ function FetchData() {
             transform: 'translate(-50%, -50%)',
             padding: '20px',
             borderRadius: '10px',
-            width: '300px',
+            width: '600px',
+            height: '600px',
+            overflow:'scroll',
             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+          },
         }}
       >
-        {selectedUser && (
+        {selectedOrder && (
           <div>
-            <h3>User Details</h3>
-            <p><strong>Name:</strong> {selectedUser.first_name} {selectedUser.last_name}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Phone:</strong> {selectedUser.phone}</p>
-            <p><strong>ID:</strong> {selectedUser.id}</p>
-            <p><strong>Created At:</strong> {selectedUser.created_at}</p>
-            <p><strong>Updated At:</strong> {selectedUser.updated_at}</p>
-            <p><strong>Deleted At:</strong> {selectedUser.deleted_at}</p>
+            <h2 style={{backgroundColor:"#3a5743", width:"fit-content", padding:"5px",color:"white", borderRadius:"5px"}}>Order Info</h2>
+            <br/>
+            <h3>User</h3>
+            <p><strong>ID:</strong> {selectedOrder.user.id}</p>
+            <p><strong>Name:</strong> {selectedOrder.user.first_name} {selectedOrder.user.last_name}</p>
+            <br/>
+            <h3>Shop</h3>
+            <p><strong>ID:</strong> {selectedOrder.shop.id}</p>
+            <p><strong>Name:</strong> {selectedOrder.shop.name}</p>
+            <br/>
+            <h3>Order Details</h3>
+            <p><strong>ID:</strong> {selectedOrder.id}</p>
+            <p><strong>Reference:</strong> {selectedOrder.reference} {selectedOrder.last_name}</p>
+            <p><strong>Payment Status:</strong> {selectedOrder.payment_status}</p>
+            <p><strong>Address ID:</strong> {selectedOrder.address_id}</p>
+            <p><strong>Subtotal Amount:</strong> {selectedOrder.subtotal_amount}</p>
+            <p><strong>Discount Amount:</strong> {selectedOrder.discount_amount}</p>
+            <p><strong>Tax Amount:</strong> {selectedOrder.tax_amount}</p>
+            <p><strong>Total Amount:</strong> {selectedOrder.total_amount}</p>
+            <p><strong>Shipping Cost:</strong> {selectedOrder.shipping_cost}</p>
+            <p><strong>Notes:</strong> {selectedOrder.notes}</p>
+            <p><strong>Payment Method:</strong> {selectedOrder.payment_method}</p>
+            <p><strong>Fulfilled At:</strong> {selectedOrder.fulfilled_at}</p>
+            <p><strong>Created At:</strong> {selectedOrder.created_at}</p>
+            <p><strong>Updated At:</strong> {selectedOrder.updated_at}</p>
+            <p><strong>Deleted At:</strong> {selectedOrder.deleted_at}</p>
+
             <button
               onClick={handleCloseModal}
               style={{
@@ -276,4 +300,4 @@ function FetchData() {
   );
 }
 
-export default FetchData;
+export default FetchOrders;

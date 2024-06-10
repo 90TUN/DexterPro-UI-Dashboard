@@ -29,8 +29,28 @@ function ResNav() {
             Home{" "}
           </Link>
         </li>
-        <li> Service request</li>
-        <li> Vendors</li>
+        <li>
+          {" "}
+          <Link
+            className={
+              location.pathname === "/order" ? "active-link" : "normal-link"
+            }
+            to="/order"
+          >
+            Orders{" "}
+          </Link>
+        </li>
+        <li>
+          {" "}
+          <Link
+            className={
+              location.pathname === "/vendor" ? "active-link" : "normal-link"
+            }
+            to="/vendor"
+          >
+            Vendors{" "}
+          </Link>
+        </li>
         <li>
           {" "}
           <Link
@@ -42,8 +62,28 @@ function ResNav() {
             Users{" "}
           </Link>
         </li>
-        <li> Services</li>
-        <li> Payments</li>
+        <li>
+          {" "}
+          <Link
+            className={
+              location.pathname === "/service" ? "active-link" : "normal-link"
+            }
+            to="/service"
+          >
+            Services{" "}
+          </Link>
+        </li>
+        <li>
+          {" "}
+          <Link
+            className={
+              location.pathname === "/transactions" ? "active-link" : "normal-link"
+            }
+            to="/transactions"
+          >
+            Transactions{" "}
+          </Link>
+        </li>
       </ul>
     </nav>
   );

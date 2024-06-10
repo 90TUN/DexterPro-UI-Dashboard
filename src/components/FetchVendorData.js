@@ -5,13 +5,13 @@ import Modal from "react-modal";
 // Setting the app element for accessibility
 Modal.setAppElement('#root');
 
-function FetchData() {
+function FetchVendorData() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
@@ -22,29 +22,23 @@ function FetchData() {
           throw new Error('No authentication token found');
         }
 
-        const fetchData = async (page) => {
-          const url = `https://api.getdexterapp.com/api/backoffice/users?page=${page}`;
+        let allData = [];
+        let currentPage = 1;
+        let totalPages = 1;
+
+        while (currentPage <= totalPages) {
+          const url = `https://api.getdexterapp.com/api/backoffice/vendors?page=${currentPage}`;
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
-          return response.data;
-        };
 
-        const fetchDataForAllPages = async () => {
-          let allData = [];
-          let page = 1;
-          let response = await fetchData(page);
-          while (response.data.length > 0) {
-            allData.push(response);
-            page++;
-            response = await fetchData(page);
-          }
-          return allData;
-        };
+          allData = [...allData, ...response.data.data];
+          totalPages = response.data.meta.last_page;
+          currentPage++;
+        }
 
-        const allData = await fetchDataForAllPages();
         setTableData(allData);
         setLoading(false);
       } catch (error) {
@@ -62,47 +56,49 @@ function FetchData() {
   };
 
   const goToPreviousPage = () => {
-    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : tableData.length - 1));
+    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : Math.ceil(filteredData.length / itemsPerPage) - 1));
   };
 
   const goToNextPage = () => {
-    setActiveTable((prev) => (prev + 1) % tableData.length);
+    setActiveTable((prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage));
   };
 
-  const handleRowClick = (user) => {
-    setSelectedUser(user);
+  const handleRowClick = (vendor) => {
+    setSelectedVendor(vendor);
   };
 
   const handleCloseModal = () => {
-    setSelectedUser(null);
+    setSelectedVendor(null);
   };
 
-  const handleSearch = (event) => {
+  const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+    setActiveTable(0); // Reset to the first page on search
   };
 
-  const filteredData = tableData
-    .flatMap((page) => page.data)
-    .filter((user) =>
-      user.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  const filteredData = tableData.filter((data) =>
+    data.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    data.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    data.id.toString().includes(searchQuery) ||
+    data.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const startIndex = activeTable * itemsPerPage + 1;
-  const endIndex = Math.min(startIndex + itemsPerPage - 1, filteredData.length);
+  const startIndex = activeTable * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
   const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage); // Calculate total pages dynamically
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
     <div
       className="Container fetch"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
         <input
           type="text"
-          placeholder="Search by ID"
+          placeholder="Search by ID..."
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={handleSearchChange}
           style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', marginTop:"30px" }}
         />
       </div>
@@ -110,7 +106,7 @@ function FetchData() {
         <p>Loading...</p>
       ) : (
         <>
-          {tableData.length > 0 ? (
+          {filteredData.length > 0 ? (
             <>
               <div className="table-container">
                 <table className="table">
@@ -125,19 +121,16 @@ function FetchData() {
                   </thead>
                   <tbody>
                     {filteredData
-                      .slice(
-                        activeTable * itemsPerPage,
-                        (activeTable + 1) * itemsPerPage
-                      )
-                      .map((user, index) => (
-                        <tr key={index} onClick={() => handleRowClick(user)}>
+                      .slice(startIndex, endIndex)
+                      .map((data, index) => (
+                        <tr key={index} onClick={() => handleRowClick(data)}>
                           <td>
-                            {user.first_name} {user.last_name}
+                            {data.first_name} {data.last_name}
                           </td>
-                          <td>{user.email}</td>
-                          <td>{user.phone}</td>
-                          <td>{user.id}</td>
-                          <td>{user.created_at}</td>
+                          <td>{data.email}</td>
+                          <td>{data.phone}</td>
+                          <td>{data.id}</td>
+                          <td>{data.created_at}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -212,7 +205,7 @@ function FetchData() {
                   className="no-of-pages"
                   style={{ marginLeft: "10px", color: "#8D9091" }}
                 >
-                  {startIndex}-{endIndex} of {totalItems} items
+                  {startIndex + 1}-{endIndex} of {totalItems} items
                 </div>
               </div>
             </>
@@ -221,12 +214,13 @@ function FetchData() {
           )}
         </>
       )}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {/* Modal for showing user details */}
+      {/* Modal for showing vendor details */}
       <Modal
-        isOpen={!!selectedUser}
+        isOpen={!!selectedVendor}
         onRequestClose={handleCloseModal}
-        contentLabel="User Details"
+        contentLabel="Vendor Details"
         style={{
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)'
@@ -245,16 +239,19 @@ function FetchData() {
           }
         }}
       >
-        {selectedUser && (
+        {selectedVendor && (
           <div>
-            <h3>User Details</h3>
-            <p><strong>Name:</strong> {selectedUser.first_name} {selectedUser.last_name}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Phone:</strong> {selectedUser.phone}</p>
-            <p><strong>ID:</strong> {selectedUser.id}</p>
-            <p><strong>Created At:</strong> {selectedUser.created_at}</p>
-            <p><strong>Updated At:</strong> {selectedUser.updated_at}</p>
-            <p><strong>Deleted At:</strong> {selectedUser.deleted_at}</p>
+            <h2>Vendor Details</h2>
+            <p><strong>ID:</strong> {selectedVendor.id}</p>
+            <p><strong>Name:</strong> {selectedVendor.first_name} {selectedVendor.last_name}</p>
+            <p><strong>Email:</strong> {selectedVendor.email}</p>
+            <p><strong>Phone:</strong> {selectedVendor.phone}</p>
+            <p><strong>Available Balance:</strong> {selectedVendor.available_balance}</p>
+            <p><strong>Qualification:</strong> {selectedVendor.qualification}</p>
+            <p><strong>NIN:</strong> {selectedVendor.nin}</p>
+            <p><strong>Created At:</strong> {selectedVendor.created_at}</p>
+            <p><strong>Updated At:</strong> {selectedVendor.updated_at}</p>
+            <p><strong>Deleted At:</strong> {selectedVendor.deleted_at}</p>
             <button
               onClick={handleCloseModal}
               style={{
@@ -276,4 +273,4 @@ function FetchData() {
   );
 }
 
-export default FetchData;
+export default FetchVendorData;

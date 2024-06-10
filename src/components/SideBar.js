@@ -25,13 +25,35 @@ function SideBar() {
         </li>
         <li>
           {" "}
-          <img src="../images/service-req.png" alt="" />
-          Service request
+          <Link
+            className={
+              location.pathname === "/order" ? "active-link" : "normal-link"
+            }
+            to="/order"
+          >
+            {location.pathname === "/" ? (
+              <img src="../images/user-normal.png" alt="" />
+            ) : (
+              <img src="../images/user-active.png" alt="" />
+            )}
+            Orders
+          </Link>{" "}
         </li>
         <li>
           {" "}
-          <img src="../images/vendors.png" alt="" />
-          Vendors
+          <Link
+            className={
+              location.pathname === "/vendor" ? "active-link" : "normal-link"
+            }
+            to="/vendor"
+          >
+            {location.pathname === "/" ? (
+              <img src="../images/user-normal.png" alt="" />
+            ) : (
+              <img src="../images/user-active.png" alt="" />
+            )}
+            Vendors
+          </Link>{" "}
         </li>
         <li>
           {" "}
@@ -51,13 +73,35 @@ function SideBar() {
         </li>
         <li>
           {" "}
-          <img src="../images/services.png" alt="" />
-          Services
+          <Link
+            className={
+              location.pathname === "/service" ? "active-link" : "normal-link"
+            }
+            to="/service"
+          > {location.pathname === "/" ? (
+            <img src="../images/user-normal.png" alt="" />
+          ) : (
+            <img src="../images/user-active.png" alt="" />
+          )}
+            Services
+          </Link>
+          {" "}
         </li>
         <li>
           {" "}
-          <img src="../images/payments.png" alt="" />
-          Payments
+          <Link
+            className={
+              location.pathname === "/transactions" ? "active-link" : "normal-link"
+            }
+            to="/transactions"
+          > {location.pathname === "/" ? (
+            <img src="../images/user-normal.png" alt="" />
+          ) : (
+            <img src="../images/user-active.png" alt="" />
+          )}
+            Transactions
+          </Link>
+          {" "}
         </li>
       </ul>
     </div>
