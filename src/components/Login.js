@@ -30,32 +30,32 @@ function Login({ onLogin }) {
 
   return (
     <div className='login_body'>
-    <div className="login-container">
-      <img src="../images/logo.png" alt="" />
-      <h2>Dexter Admin</h2>
-      <div  className='login-body-item'>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
+      <div className="login-container">
+        <img src="../images/logo.png" alt="" />
+        <h2>Dexter Admin</h2>
+        <div className='login-body-item'>
+          <label>
+            Email:
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className='login-body-item'>
+          <label>
+            Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+        </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button onClick={handleLogin}>Login</button>
       </div>
-      <div className='login-body-item'>
-        <label>
-          Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-      </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button onClick={handleLogin}>Login</button>
-    </div>
     </div>
   );
 }

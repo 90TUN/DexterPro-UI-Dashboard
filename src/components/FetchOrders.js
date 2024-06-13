@@ -129,7 +129,7 @@ function FetchOrders() {
                     {filteredData
                       .slice(startIndex, endIndex)
                       .map((data, index) => (
-                        <tr key={index} onClick={() => handleRowClick(data)}>
+                        <tr key={index} onClick={() => handleRowClick(data)} className="table-row">
                           <td>
                             {data.id} 
                           </td>

@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from "react";
 
+function StarRating({ rating }) {
+  const totalStars = 5;
+  const filledStars = Math.round(rating);
+  const stars = [];
+
+  for (let i = 0; i < totalStars; i++) {
+    if (i < filledStars) {
+      stars.push(<span key={i} className="star filled">★</span>);
+    } else {
+      stars.push(<span key={i} className="star">★</span>);
+    }
+  }
+
+  return <div className="star-rating">{stars}</div>;
+}
+
 function TopRatedShops() {
   const [shops, setShops] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false); // State variable to track data loading
@@ -84,29 +100,19 @@ function TopRatedShops() {
                 <div
                   className="vendor--line"
                   style={{
-                    color: "red",
+                    color: "black",
                     marginLeft: "16.5px",
                     marginRight: "1px",
                     wordWrap: "normal",
+                    fontSize: "13px",
+                    fontWeight: "bold"
                   }}
                 >
+                  {shop.average_rating}
                 </div>
               </div>
               <div className="vendor--p3">
-                <img
-                  className="vendor--line"
-                  style={{ marginRight: "4px" }}
-                  src="../images/Stars.png"
-                  alt=""
-                />
-                <div
-                  className="vendor--line"
-                  style={{
-                    color: "#3A5743",
-                    fontWeight: "700",
-                  }}
-                >
-                </div>
+                <StarRating rating={shop.average_rating} />
               </div>
             </div>
           </div>

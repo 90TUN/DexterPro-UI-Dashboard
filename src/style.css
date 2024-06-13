@@ -112,6 +112,40 @@ body {
   margin-right: 4px;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: white;
+  min-width: 100px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  right: 0; /* Adjust according to your layout */
+  top: 100%; /* Position below the dropdown button */
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+}
+
+.dropdown-content button {
+  background-color: #f1f1f1;
+  border: none;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.dropdown-content button:hover {
+  background-color: #ddd;
+}
+
 .side--nav {
   display: flex;
   align-items: center;
@@ -236,6 +270,11 @@ table {
 
 .table tr {
   height: 54px;
+}
+
+.table-row:hover{
+  background-color: red !important;
+  cursor: pointer;
 }
 
 .final-container {
@@ -453,11 +492,16 @@ tbody tr:first-child {
   flex: 1; /* Equal width for each div */
   display: flex; /* Flex container */
   align-items: center; /* Align items vertically center */
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .vendor--p1 {
   justify-content: flex-start; /* Align content to the start */
+}
+
+.vendor--p2{
+  display: flex;
+  justify-content: flex-end;
 }
 
 .vendor--p3 {
@@ -472,9 +516,6 @@ tbody tr:first-child {
   justify-content: center;
 }
 
-.vendor--p1 {
-  justify-content: flex-start; /* Align content to the start */
-}
 
 .vendor--p3 {
   justify-content: flex-end; /* Align content to the end */
@@ -511,6 +552,9 @@ tbody tr:first-child {
 
 .login-container h2{
   width: fit-content;
+  max-width: 300px;
+  font-size: 25px;
+  font-weight: bolder;
 }
 
 .login_body{
@@ -540,6 +584,21 @@ input[type="password"], input[type="email"]{
 .login-body-item{
   margin-top: 20px;
 }
+
+.star-rating {
+  display: flex;
+  align-items: right;
+}
+
+.star {
+  font-size: 15px;
+  color: lightgray; /* Grey or ash color for empty stars */
+}
+
+.star.filled {
+  color: gold; /* Yellow color for filled stars */
+}
+
 
 
 @media screen and (min-width: 1750px) {

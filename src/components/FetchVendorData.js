@@ -12,6 +12,7 @@ function FetchVendorData() {
   const [error, setError] = useState('');
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
@@ -69,11 +70,41 @@ function FetchVendorData() {
 
   const handleCloseModal = () => {
     setSelectedVendor(null);
+    setShowConfirmDelete(false);
   };
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
     setActiveTable(0); // Reset to the first page on search
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const handleDeleteVendor = async () => {
+    if (!selectedVendor) return;
+
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      await axios.delete(`https://api.getdexterapp.com/api/backoffice/vendors/${selectedVendor.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Remove the vendor from the tableData
+      const updatedTableData = tableData.filter(vendor => vendor.id !== selectedVendor.id);
+      setTableData(updatedTableData);
+      handleCloseModal(); // Close the modal after deletion
+    } catch (error) {
+      console.error('Error deleting vendor:', error);
+      setError('Failed to delete vendor');
+    }
   };
 
   const filteredData = tableData.filter((data) =>
@@ -218,7 +249,7 @@ function FetchVendorData() {
 
       {/* Modal for showing vendor details */}
       <Modal
-        isOpen={!!selectedVendor}
+        isOpen={!!selectedVendor && !showConfirmDelete}
         onRequestClose={handleCloseModal}
         contentLabel="Vendor Details"
         style={{
@@ -252,8 +283,70 @@ function FetchVendorData() {
             <p><strong>Created At:</strong> {selectedVendor.created_at}</p>
             <p><strong>Updated At:</strong> {selectedVendor.updated_at}</p>
             <p><strong>Deleted At:</strong> {selectedVendor.deleted_at}</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  backgroundColor: "#3A5743",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDeleteClick}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  backgroundColor: "#d9534f",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  marginLeft: "10px"
+                }}
+              >
+                Delete Vendor
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal
+        isOpen={showConfirmDelete}
+        onRequestClose={() => setShowConfirmDelete(false)}
+        contentLabel="Confirm Delete"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '20px',
+            borderRadius: '10px',
+            width: '300px',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
+          }
+        }}
+      >
+        <div>
+          <h2>Confirm Delete</h2>
+          <p>Are you sure you want to delete this vendor?</p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button
-              onClick={handleCloseModal}
+              onClick={() => setShowConfirmDelete(false)}
               style={{
                 marginTop: "10px",
                 padding: "5px 10px",
@@ -261,13 +354,28 @@ function FetchVendorData() {
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: "pointer",
+                cursor: "pointer"
               }}
             >
-              Close
+              No
+            </button>
+            <button
+              onClick={handleDeleteVendor}
+              style={{
+                marginTop: "10px",
+                padding: "5px 10px",
+                backgroundColor: "#d9534f",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginLeft: "10px"
+              }}
+            >
+              Yes
             </button>
           </div>
-        )}
+        </div>
       </Modal>
     </div>
   );

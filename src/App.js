@@ -1,10 +1,9 @@
-// App.js
 import React, { useState, useEffect } from "react";
 import SideBar from "./components/SideBar";
 import Nav from "./components/Nav";
 import DataInfo from "./components/DataInfo";
 import UserGraphContainer from "./components/UserGraphContainer";
-import TopRatedVendors from "./components/TopRatedVendors";
+import TopRatedBusinesses from "./components/TopRatedBusinesses";
 import TopRatedShops from "./components/TopRatedShops";
 import ResNav from "./components/ResNav";
 import Login from "./components/Login";
@@ -39,8 +38,7 @@ function App() {
       <div className="main">
         <SideBar />
         <div className="user--display">
-          <Nav title="Welcome Dexter Admin," />
-          <button onClick={handleLogout}>Logout</button>
+          <Nav title="Welcome Dexter Admin," onLogout={handleLogout} />
           <DataInfo />
           <div className="final-container">
             <div className="item1">
@@ -48,7 +46,7 @@ function App() {
             </div>
             <div className="item3">
               <div className="item2">
-                <TopRatedVendors />
+                <TopRatedBusinesses />
               </div>
               <div className="item2">
                 <TopRatedShops />

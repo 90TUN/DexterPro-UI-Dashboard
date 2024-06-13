@@ -12,6 +12,7 @@ function FetchData() {
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
@@ -75,10 +76,44 @@ function FetchData() {
 
   const handleCloseModal = () => {
     setSelectedUser(null);
+    setShowConfirmDelete(false);
   };
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      await axios.delete(`https://api.getdexterapp.com/api/backoffice/users/${selectedUser.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Remove the user from the tableData
+      const updatedTableData = tableData.map(page => ({
+        ...page,
+        data: page.data.filter(user => user.id !== selectedUser.id)
+      })).filter(page => page.data.length > 0); // Remove empty pages
+
+      setTableData(updatedTableData);
+      handleCloseModal(); // Close the modal after deletion
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setError('Failed to delete user');
+    }
   };
 
   const filteredData = tableData
@@ -224,7 +259,7 @@ function FetchData() {
 
       {/* Modal for showing user details */}
       <Modal
-        isOpen={!!selectedUser}
+        isOpen={!!selectedUser && !showConfirmDelete}
         onRequestClose={handleCloseModal}
         contentLabel="User Details"
         style={{
@@ -255,8 +290,70 @@ function FetchData() {
             <p><strong>Created At:</strong> {selectedUser.created_at}</p>
             <p><strong>Updated At:</strong> {selectedUser.updated_at}</p>
             <p><strong>Deleted At:</strong> {selectedUser.deleted_at}</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  backgroundColor: "#3A5743",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDeleteClick}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  backgroundColor: "#d9534f",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  marginLeft: "10px"
+                }}
+              >
+                Delete User
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal
+        isOpen={showConfirmDelete}
+        onRequestClose={() => setShowConfirmDelete(false)}
+        contentLabel="Confirm Delete"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '20px',
+            borderRadius: '10px',
+            width: '300px',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
+          }
+        }}
+      >
+        <div>
+          <h2>Confirm Delete</h2>
+          <p>Are you sure you want to delete this user?</p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button
-              onClick={handleCloseModal}
+              onClick={() => setShowConfirmDelete(false)}
               style={{
                 marginTop: "10px",
                 padding: "5px 10px",
@@ -264,13 +361,28 @@ function FetchData() {
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: "pointer",
+                cursor: "pointer"
               }}
             >
-              Close
+              No
+            </button>
+            <button
+              onClick={handleDeleteUser}
+              style={{
+                marginTop: "10px",
+                padding: "5px 10px",
+                backgroundColor: "#d9534f",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginLeft: "10px"
+              }}
+            >
+              Yes
             </button>
           </div>
-        )}
+        </div>
       </Modal>
     </div>
   );
