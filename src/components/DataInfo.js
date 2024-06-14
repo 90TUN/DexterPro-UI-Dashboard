@@ -6,18 +6,18 @@ function DataInfo() {
   const [activeServicesCount, setActiveServicesCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [activeServiceRequestCount, setActiveServiceRequestCount] = useState(0);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Retrieve the token from sessionStorage (consistent with your other code)
-        const token = sessionStorage.getItem('accessToken');
-        console.log('Authorization Tokennnn:', token);
-        
+        const token = sessionStorage.getItem("accessToken");
+        console.log("Authorization Tokennnn:", token);
+
         // If there is no token, throw an error
         if (!token) {
-          throw new Error('No authorization token found');
+          throw new Error("No authorization token found");
         }
 
         const response = await axios.get(
@@ -26,20 +26,24 @@ function DataInfo() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const data = response.data;
         console.log(data);
-          console.log(data.data.total_vendors)
+        console.log(data.data.total_vendors);
 
-          setVendorCount(data.data.total_vendors);
-          setUserCount(data.data.total_users);
-          setActiveServiceRequestCount(data.data.total_completed_bookings + data.data.total_completed_orders);
-          setActiveServicesCount(data.data.total_completed_bookings + data.data.total_completed_orders);
+        setVendorCount(data.data.total_vendors);
+        setUserCount(data.data.total_users);
+        setActiveServiceRequestCount(
+          data.data.total_completed_bookings + data.data.total_completed_orders,
+        );
+        setActiveServicesCount(
+          data.data.total_completed_bookings + data.data.total_completed_orders,
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError('Failed to fetch data');
+        setError("Failed to fetch data");
       }
     };
 
@@ -48,7 +52,7 @@ function DataInfo() {
 
   return (
     <div className="info">
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <div className="info--card vendor">
         <img src="../images/info--vendor.png" alt="" />
         <h1 style={{ color: "#1B264F" }}>{vendorCount}</h1>

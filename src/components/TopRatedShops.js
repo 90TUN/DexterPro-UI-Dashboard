@@ -7,9 +7,17 @@ function StarRating({ rating }) {
 
   for (let i = 0; i < totalStars; i++) {
     if (i < filledStars) {
-      stars.push(<span key={i} className="star filled">★</span>);
+      stars.push(
+        <span key={i} className="star filled">
+          ★
+        </span>,
+      );
     } else {
-      stars.push(<span key={i} className="star">★</span>);
+      stars.push(
+        <span key={i} className="star">
+          ★
+        </span>,
+      );
     }
   }
 
@@ -23,24 +31,29 @@ function TopRatedShops() {
   useEffect(() => {
     async function fetchShops() {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
-        const response = await fetch("https://api.getdexterapp.com/api/backoffice/top-rated/shops", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await fetch(
+          "https://api.getdexterapp.com/api/backoffice/top-rated/shops",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
         const responseData = await response.json();
 
         if (!responseData.data) {
-          throw new Error('Data not found in response');
+          throw new Error("Data not found in response");
         }
 
         // Sort vendors by average rating in descending order
-        const sortedShops = responseData.data.sort((a, b) => b.average_rating - a.average_rating);
+        const sortedShops = responseData.data.sort(
+          (a, b) => b.average_rating - a.average_rating,
+        );
 
         // Take only the top 5 vendors
         const topRatedShops = sortedShops.slice(0, 5);
@@ -78,7 +91,7 @@ function TopRatedShops() {
                     width: "30px",
                     height: "30px",
                     borderRadius: "50%",
-                    marginRight: "16.5px",
+                    marginRight: "23px",
                     border: "3px solid #D9D9D9",
                   }}
                   src={shop.cover_image}
@@ -105,7 +118,7 @@ function TopRatedShops() {
                     marginRight: "1px",
                     wordWrap: "normal",
                     fontSize: "13px",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                   }}
                 >
                   {shop.average_rating}

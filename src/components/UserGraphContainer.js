@@ -9,22 +9,24 @@ const UserGraphContainer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
-  
+
         const apiLinks = [
           "https://api.getdexterapp.com/api/backoffice/users",
           "https://api.getdexterapp.com/api/backoffice/users?page=2",
           "https://api.getdexterapp.com/api/backoffice/users?page=3",
         ];
-  
-        const fetchRequests = apiLinks.map((link) => axios.get(link, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }));
+
+        const fetchRequests = apiLinks.map((link) =>
+          axios.get(link, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        );
         const responses = await Promise.all(fetchRequests);
         const userDataArray = responses.flatMap(
           (response) => response.data.data,
@@ -34,10 +36,9 @@ const UserGraphContainer = () => {
         console.error("Error fetching user data:", error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   const formatUserData = (userData) => {
     const months = [

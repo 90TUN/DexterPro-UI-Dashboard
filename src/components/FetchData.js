@@ -3,13 +3,13 @@ import axios from "axios";
 import Modal from "react-modal";
 
 // Setting the app element for accessibility
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function FetchData() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -18,17 +18,17 @@ function FetchData() {
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
         const fetchData = async (page) => {
           const url = `https://api.getdexterapp.com/api/backoffice/users?page=${page}`;
           const response = await axios.get(url, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
           return response.data;
         };
@@ -49,8 +49,8 @@ function FetchData() {
         setTableData(allData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data");
         setLoading(false);
       }
     };
@@ -91,35 +91,40 @@ function FetchData() {
     if (!selectedUser) return;
 
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = sessionStorage.getItem("accessToken");
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error("No authentication token found");
       }
 
-      await axios.delete(`https://api.getdexterapp.com/api/backoffice/users/${selectedUser.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await axios.delete(
+        `https://api.getdexterapp.com/api/backoffice/users/${selectedUser.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       // Remove the user from the tableData
-      const updatedTableData = tableData.map(page => ({
-        ...page,
-        data: page.data.filter(user => user.id !== selectedUser.id)
-      })).filter(page => page.data.length > 0); // Remove empty pages
+      const updatedTableData = tableData
+        .map((page) => ({
+          ...page,
+          data: page.data.filter((user) => user.id !== selectedUser.id),
+        }))
+        .filter((page) => page.data.length > 0); // Remove empty pages
 
       setTableData(updatedTableData);
       handleCloseModal(); // Close the modal after deletion
     } catch (error) {
-      console.error('Error deleting user:', error);
-      setError('Failed to delete user');
+      console.error("Error deleting user:", error);
+      setError("Failed to delete user");
     }
   };
 
   const filteredData = tableData
     .flatMap((page) => page.data)
     .filter((user) =>
-      user.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      user.id.toString().toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
   const startIndex = activeTable * itemsPerPage + 1;
@@ -132,13 +137,24 @@ function FetchData() {
       className="Container fetch"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
         <input
           type="text"
           placeholder="Search by ID"
           value={searchQuery}
           onChange={handleSearch}
-          style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', marginTop:"30px" }}
+          style={{
+            padding: "5px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginTop: "30px",
+          }}
         />
       </div>
       {loading ? (
@@ -151,10 +167,10 @@ function FetchData() {
                 <table className="table">
                   <thead>
                     <tr>
+                      <th>ID</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Phone number</th>
-                      <th>ID</th>
                       <th>Created At</th>
                     </tr>
                   </thead>
@@ -162,16 +178,16 @@ function FetchData() {
                     {filteredData
                       .slice(
                         activeTable * itemsPerPage,
-                        (activeTable + 1) * itemsPerPage
+                        (activeTable + 1) * itemsPerPage,
                       )
                       .map((user, index) => (
                         <tr key={index} onClick={() => handleRowClick(user)}>
+                          <td>{user.id}</td>
                           <td>
                             {user.first_name} {user.last_name}
                           </td>
                           <td>{user.email}</td>
                           <td>{user.phone}</td>
-                          <td>{user.id}</td>
                           <td>{user.created_at}</td>
                         </tr>
                       ))}
@@ -264,33 +280,48 @@ function FetchData() {
         contentLabel="User Details"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           },
           content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '10px',
-            width: '300px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            padding: "20px",
+            borderRadius: "10px",
+            width: "300px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         {selectedUser && (
           <div>
             <h3>User Details</h3>
-            <p><strong>Name:</strong> {selectedUser.first_name} {selectedUser.last_name}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Phone:</strong> {selectedUser.phone}</p>
-            <p><strong>ID:</strong> {selectedUser.id}</p>
-            <p><strong>Created At:</strong> {selectedUser.created_at}</p>
-            <p><strong>Updated At:</strong> {selectedUser.updated_at}</p>
-            <p><strong>Deleted At:</strong> {selectedUser.deleted_at}</p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <p>
+              <strong>Name:</strong> {selectedUser.first_name}{" "}
+              {selectedUser.last_name}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedUser.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedUser.phone}
+            </p>
+            <p>
+              <strong>ID:</strong> {selectedUser.id}
+            </p>
+            <p>
+              <strong>Created At:</strong> {selectedUser.created_at}
+            </p>
+            <p>
+              <strong>Updated At:</strong> {selectedUser.updated_at}
+            </p>
+            <p>
+              <strong>Deleted At:</strong> {selectedUser.deleted_at}
+            </p>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 onClick={handleCloseModal}
                 style={{
@@ -300,7 +331,7 @@ function FetchData() {
                   color: "white",
                   border: "none",
                   borderRadius: "5px",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
                 Close
@@ -315,7 +346,7 @@ function FetchData() {
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
-                  marginLeft: "10px"
+                  marginLeft: "10px",
                 }}
               >
                 Delete User
@@ -332,26 +363,26 @@ function FetchData() {
         contentLabel="Confirm Delete"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           },
           content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '10px',
-            width: '300px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            padding: "20px",
+            borderRadius: "10px",
+            width: "300px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         <div>
           <h2>Confirm Delete</h2>
           <p>Are you sure you want to delete this user?</p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={() => setShowConfirmDelete(false)}
               style={{
@@ -361,7 +392,7 @@ function FetchData() {
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               No
@@ -376,7 +407,7 @@ function FetchData() {
                 border: "none",
                 borderRadius: "5px",
                 cursor: "pointer",
-                marginLeft: "10px"
+                marginLeft: "10px",
               }}
             >
               Yes

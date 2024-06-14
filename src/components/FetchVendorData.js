@@ -3,24 +3,24 @@ import axios from "axios";
 import Modal from "react-modal";
 
 // Setting the app element for accessibility
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function FetchVendorData() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selectedVendor, setSelectedVendor] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
         let allData = [];
@@ -31,8 +31,8 @@ function FetchVendorData() {
           const url = `https://api.getdexterapp.com/api/backoffice/vendors?page=${currentPage}`;
           const response = await axios.get(url, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           allData = [...allData, ...response.data.data];
@@ -43,8 +43,8 @@ function FetchVendorData() {
         setTableData(allData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data");
         setLoading(false);
       }
     };
@@ -57,11 +57,17 @@ function FetchVendorData() {
   };
 
   const goToPreviousPage = () => {
-    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : Math.ceil(filteredData.length / itemsPerPage) - 1));
+    setActiveTable((prev) =>
+      prev - 1 >= 0
+        ? prev - 1
+        : Math.ceil(filteredData.length / itemsPerPage) - 1,
+    );
   };
 
   const goToNextPage = () => {
-    setActiveTable((prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage));
+    setActiveTable(
+      (prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage),
+    );
   };
 
   const handleRowClick = (vendor) => {
@@ -86,32 +92,38 @@ function FetchVendorData() {
     if (!selectedVendor) return;
 
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = sessionStorage.getItem("accessToken");
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error("No authentication token found");
       }
 
-      await axios.delete(`https://api.getdexterapp.com/api/backoffice/vendors/${selectedVendor.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await axios.delete(
+        `https://api.getdexterapp.com/api/backoffice/vendors/${selectedVendor.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       // Remove the vendor from the tableData
-      const updatedTableData = tableData.filter(vendor => vendor.id !== selectedVendor.id);
+      const updatedTableData = tableData.filter(
+        (vendor) => vendor.id !== selectedVendor.id,
+      );
       setTableData(updatedTableData);
       handleCloseModal(); // Close the modal after deletion
     } catch (error) {
-      console.error('Error deleting vendor:', error);
-      setError('Failed to delete vendor');
+      console.error("Error deleting vendor:", error);
+      setError("Failed to delete vendor");
     }
   };
 
-  const filteredData = tableData.filter((data) =>
-    data.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    data.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    data.id.toString().includes(searchQuery) ||
-    data.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = tableData.filter(
+    (data) =>
+      data.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.id.toString().includes(searchQuery) ||
+      data.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const startIndex = activeTable * itemsPerPage;
@@ -124,13 +136,24 @@ function FetchVendorData() {
       className="Container fetch"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
         <input
           type="text"
           placeholder="Search by ID..."
           value={searchQuery}
           onChange={handleSearchChange}
-          style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', marginTop:"30px" }}
+          style={{
+            padding: "5px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginTop: "30px",
+          }}
         />
       </div>
       {loading ? (
@@ -245,7 +268,7 @@ function FetchVendorData() {
           )}
         </>
       )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Modal for showing vendor details */}
       <Modal
@@ -254,36 +277,58 @@ function FetchVendorData() {
         contentLabel="Vendor Details"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           },
           content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '10px',
-            width: '300px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            padding: "20px",
+            borderRadius: "10px",
+            width: "300px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         {selectedVendor && (
           <div>
             <h2>Vendor Details</h2>
-            <p><strong>ID:</strong> {selectedVendor.id}</p>
-            <p><strong>Name:</strong> {selectedVendor.first_name} {selectedVendor.last_name}</p>
-            <p><strong>Email:</strong> {selectedVendor.email}</p>
-            <p><strong>Phone:</strong> {selectedVendor.phone}</p>
-            <p><strong>Available Balance:</strong> {selectedVendor.available_balance}</p>
-            <p><strong>Qualification:</strong> {selectedVendor.qualification}</p>
-            <p><strong>NIN:</strong> {selectedVendor.nin}</p>
-            <p><strong>Created At:</strong> {selectedVendor.created_at}</p>
-            <p><strong>Updated At:</strong> {selectedVendor.updated_at}</p>
-            <p><strong>Deleted At:</strong> {selectedVendor.deleted_at}</p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <p>
+              <strong>ID:</strong> {selectedVendor.id}
+            </p>
+            <p>
+              <strong>Name:</strong> {selectedVendor.first_name}{" "}
+              {selectedVendor.last_name}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedVendor.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedVendor.phone}
+            </p>
+            <p>
+              <strong>Available Balance:</strong>{" "}
+              {selectedVendor.available_balance}
+            </p>
+            <p>
+              <strong>Qualification:</strong> {selectedVendor.qualification}
+            </p>
+            <p>
+              <strong>NIN:</strong> {selectedVendor.nin}
+            </p>
+            <p>
+              <strong>Created At:</strong> {selectedVendor.created_at}
+            </p>
+            <p>
+              <strong>Updated At:</strong> {selectedVendor.updated_at}
+            </p>
+            <p>
+              <strong>Deleted At:</strong> {selectedVendor.deleted_at}
+            </p>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 onClick={handleCloseModal}
                 style={{
@@ -293,7 +338,7 @@ function FetchVendorData() {
                   color: "white",
                   border: "none",
                   borderRadius: "5px",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
                 Close
@@ -308,7 +353,7 @@ function FetchVendorData() {
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
-                  marginLeft: "10px"
+                  marginLeft: "10px",
                 }}
               >
                 Delete Vendor
@@ -325,26 +370,26 @@ function FetchVendorData() {
         contentLabel="Confirm Delete"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           },
           content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '10px',
-            width: '300px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            padding: "20px",
+            borderRadius: "10px",
+            width: "300px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         <div>
           <h2>Confirm Delete</h2>
           <p>Are you sure you want to delete this vendor?</p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={() => setShowConfirmDelete(false)}
               style={{
@@ -354,7 +399,7 @@ function FetchVendorData() {
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               No
@@ -369,7 +414,7 @@ function FetchVendorData() {
                 border: "none",
                 borderRadius: "5px",
                 cursor: "pointer",
-                marginLeft: "10px"
+                marginLeft: "10px",
               }}
             >
               Yes

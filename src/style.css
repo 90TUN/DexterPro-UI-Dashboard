@@ -272,7 +272,7 @@ table {
   height: 54px;
 }
 
-.table-row:hover{
+.table-row:hover {
   background-color: red !important;
   cursor: pointer;
 }
@@ -499,7 +499,7 @@ tbody tr:first-child {
   justify-content: flex-start; /* Align content to the start */
 }
 
-.vendor--p2{
+.vendor--p2 {
   display: flex;
   justify-content: flex-end;
 }
@@ -515,7 +515,6 @@ tbody tr:first-child {
   align-items: center; /* Align items vertically center */
   justify-content: center;
 }
-
 
 .vendor--p3 {
   justify-content: flex-end; /* Align content to the end */
@@ -537,52 +536,99 @@ tbody tr:first-child {
   overflow-y: scroll;
 }
 
-.login-container{
-  max-width: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 488px;
-  padding-left: 100px;
-  padding-right: 100px;
-  background-color: white;
-  border-radius: 20px;
-}
-
-.login-container h2{
-  width: fit-content;
-  max-width: 300px;
-  font-size: 25px;
-  font-weight: bolder;
-}
-
-.login_body{
+.login_body {
   width: 100%;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #8d9091;
+  padding: 20px;
 }
 
-input[type="password"], input[type="email"]{
- width: 200px;
- padding: 5px;
+.login-container {
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.login_body button{
-  margin-top: 50px;
-  width: 200px;
-  background-color:#3a5743;
+.login-container h2 {
+  width: fit-content;
+  max-width: 300px;
+  font-size: 25px;
+  font-weight: bolder;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+input[type="password"],
+input[type="email"] {
+  width: 300px;
+  padding: 10px;
+  margin: 10px 0;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login_body button {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #3a5743;
   color: white;
-  font-style: bold;
-  height: 40px;
+  font-weight: bold;
+  height: 50px;
   border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-.login-body-item{
+.login-body-item {
+  width: 100%;
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Media queries for different screen sizes */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 20px 40px; /* Adjust padding for smaller screens */
+  }
+
+  input[type="password"],
+  input[type="email"] {
+    max-width: 200px; /* Maintain max-width constraint */
+  }
+
+  .login_body button {
+    max-width: 100%; /* Remove max-width constraint */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 20px; /* Adjust padding for very small screens */
+  }
+
+  input[type="password"],
+  input[type="email"] {
+    padding: 8px; /* Adjust padding for very small screens */
+  }
+
+  .login_body button {
+    height: 45px; /* Adjust height for very small screens */
+  }
 }
 
 .star-rating {
@@ -599,7 +645,22 @@ input[type="password"], input[type="email"]{
   color: gold; /* Yellow color for filled stars */
 }
 
+.post-logout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  border: 2px solid red;
+}
 
+.post-logout img {
+  margin-bottom: 50px;
+}
+
+.post-logout h4 {
+  margin-bottom: 50px;
+}
 
 @media screen and (min-width: 1750px) {
   .item1 {
@@ -953,9 +1014,8 @@ input[type="password"], input[type="email"]{
 
   .no-of-pages {
     font-size: 10px;
-  }m
-
-  .pagination-button {
+  }
+  m .pagination-button {
     font-size: 10px;
   }
   .user-toggle {

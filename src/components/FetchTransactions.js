@@ -3,23 +3,23 @@ import axios from "axios";
 import Modal from "react-modal";
 
 // Setting the app element for accessibility
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function FetchTransactions() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
         let allData = [];
@@ -30,8 +30,8 @@ function FetchTransactions() {
           const url = `https://api.getdexterapp.com/api/backoffice/transactions?page=${currentPage}`;
           const response = await axios.get(url, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           allData = [...allData, ...response.data.data];
@@ -42,8 +42,8 @@ function FetchTransactions() {
         setTableData(allData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data");
         setLoading(false);
       }
     };
@@ -56,11 +56,17 @@ function FetchTransactions() {
   };
 
   const goToPreviousPage = () => {
-    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : Math.ceil(filteredData.length / itemsPerPage) - 1));
+    setActiveTable((prev) =>
+      prev - 1 >= 0
+        ? prev - 1
+        : Math.ceil(filteredData.length / itemsPerPage) - 1,
+    );
   };
 
   const goToNextPage = () => {
-    setActiveTable((prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage));
+    setActiveTable(
+      (prev) => (prev + 1) % Math.ceil(filteredData.length / itemsPerPage),
+    );
   };
 
   const handleRowClick = (transaction) => {
@@ -76,11 +82,12 @@ function FetchTransactions() {
     setActiveTable(0); // Reset to the first page on search
   };
 
-  const filteredData = tableData.filter((data) =>
-    data.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    data.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    data.id.toString().includes(searchQuery) ||
-    data.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = tableData.filter(
+    (data) =>
+      data.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      data.id.toString().includes(searchQuery) ||
+      data.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const startIndex = activeTable * itemsPerPage;
@@ -93,13 +100,24 @@ function FetchTransactions() {
       className="Container fetch"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
         <input
           type="text"
           placeholder="Search by ID..."
           value={searchQuery}
           onChange={handleSearchChange}
-          style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', marginTop:"30px" }}
+          style={{
+            padding: "5px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginTop: "30px",
+          }}
         />
       </div>
       {loading ? (
@@ -124,9 +142,7 @@ function FetchTransactions() {
                       .slice(startIndex, endIndex)
                       .map((data, index) => (
                         <tr key={index} onClick={() => handleRowClick(data)}>
-                          <td>
-                            {data.id}
-                          </td>
+                          <td>{data.id}</td>
                           <td>{data.type}</td>
                           <td>{data.amount}</td>
                           <td>{data.reference}</td>
@@ -214,7 +230,7 @@ function FetchTransactions() {
           )}
         </>
       )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Modal for showing vendor details */}
       <Modal
@@ -223,26 +239,28 @@ function FetchTransactions() {
         contentLabel="Transaction Details"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           },
           content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '20px',
-            borderRadius: '10px',
-            width: '300px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-          }
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            padding: "20px",
+            borderRadius: "10px",
+            width: "300px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         {selectedTransaction && (
           <div>
             <h2>Vendor Details</h2>
-            <p><strong>ID:</strong> {selectedTransaction.id}</p>
+            <p>
+              <strong>ID:</strong> {selectedTransaction.id}
+            </p>
             <button
               onClick={handleCloseModal}
               style={{

@@ -5,15 +5,15 @@ function FetchServices() {
   const [tableData, setTableData] = useState([]);
   const [activeTable, setActiveTable] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const itemsPerPage = 10; // Change this value as needed
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const token = sessionStorage.getItem('accessToken');
+        const token = sessionStorage.getItem("accessToken");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
         let allData = [];
@@ -24,8 +24,8 @@ function FetchServices() {
           const url = `https://api.getdexterapp.com/api/backoffice/services?page=${currentPage}`;
           const response = await axios.get(url, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           allData = [...allData, ...response.data.data];
@@ -36,8 +36,8 @@ function FetchServices() {
         setTableData(allData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data");
         setLoading(false);
       }
     };
@@ -50,11 +50,15 @@ function FetchServices() {
   };
 
   const goToPreviousPage = () => {
-    setActiveTable((prev) => (prev - 1 >= 0 ? prev - 1 : Math.ceil(tableData.length / itemsPerPage) - 1));
+    setActiveTable((prev) =>
+      prev - 1 >= 0 ? prev - 1 : Math.ceil(tableData.length / itemsPerPage) - 1,
+    );
   };
 
   const goToNextPage = () => {
-    setActiveTable((prev) => (prev + 1) % Math.ceil(tableData.length / itemsPerPage));
+    setActiveTable(
+      (prev) => (prev + 1) % Math.ceil(tableData.length / itemsPerPage),
+    );
   };
 
   const startIndex = activeTable * itemsPerPage;
@@ -65,7 +69,7 @@ function FetchServices() {
   return (
     <div
       className="Container fetch"
-      style={{ display: "flex", flexDirection: "column", marginTop: "50px"}}
+      style={{ display: "flex", flexDirection: "column", marginTop: "50px" }}
     >
       {loading ? (
         <p>Loading...</p>
@@ -95,7 +99,7 @@ function FetchServices() {
                           <td>{data.description}</td>
                           <td>{data.total_shops}</td>
                           <td>{data.total_businesses}</td>
-                          <td>{data.is_bookable ? 'Yes' : 'No'}</td>
+                          <td>{data.is_bookable ? "Yes" : "No"}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -166,22 +170,22 @@ function FetchServices() {
                     &#8250;
                   </button>
                 </div>
-<div
-className="no-of-pages"
-style={{ marginLeft: "10px", color: "#8D9091" }}
->
-{startIndex + 1}-{endIndex} of {totalItems} items
-</div>
-</div>
-</>
-) : (
-<p>No data available.</p>
-)}
-</>
-)}
-{error && <p style={{ color: 'red' }}>{error}</p>}
-</div>
-);
+                <div
+                  className="no-of-pages"
+                  style={{ marginLeft: "10px", color: "#8D9091" }}
+                >
+                  {startIndex + 1}-{endIndex} of {totalItems} items
+                </div>
+              </div>
+            </>
+          ) : (
+            <p>No data available.</p>
+          )}
+        </>
+      )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
 }
 
 export default FetchServices;

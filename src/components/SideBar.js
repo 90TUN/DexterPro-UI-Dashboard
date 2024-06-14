@@ -85,7 +85,9 @@ function SideBar() {
         <li>
           <Link
             className={
-              location.pathname === "/transactions" ? "active-link" : "normal-link"
+              location.pathname === "/transactions"
+                ? "active-link"
+                : "normal-link"
             }
             to="/transactions"
           >
